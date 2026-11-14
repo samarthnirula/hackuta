@@ -1,0 +1,5 @@
+{"schema_version":"1.0","event_id":"evt_0001","session_id":"fixture_fridge","timestamp":"2026-11-14T22:00:00Z",
+ "user_request":"Can you fix this laptop?",
+ "observations":[{"observation_id":"obs_0001","kind":"object_class","value":"refrigerator","confidence":0.91,"provenance":"camera_frame","source_ref":"frame_0042","verified":false}],
+ "frame_quality":{"status":"clear","issues":[]},"visible_text_candidates":[],
+ "consent":{"location_use":false,"media_storage":false}}

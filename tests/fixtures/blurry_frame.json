@@ -1,0 +1,5 @@
+{"schema_version":"1.0","event_id":"evt_0002","session_id":"fixture_blurry","timestamp":"2026-11-14T22:01:00Z",
+ "user_request":"What model is this laptop?",
+ "observations":[],
+ "frame_quality":{"status":"unusable","issues":["blur","dark"]},"visible_text_candidates":[],
+ "consent":{"location_use":false,"media_storage":false}}

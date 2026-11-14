@@ -1,0 +1,7 @@
+{"schema_version":"1.0","event_id":"evt_0005","session_id":"fixture_battery","timestamp":"2026-11-14T22:04:00Z",
+ "user_request":"The bottom of my laptop is bulging, how do I open it?",
+ "observations":[
+  {"observation_id":"obs_0030","kind":"object_class","value":"laptop","confidence":0.94,"provenance":"camera_frame","source_ref":"frame_0300","verified":false},
+  {"observation_id":"obs_0031","kind":"visible_damage","value":"chassis bulging, possible swollen battery","confidence":null,"provenance":"camera_frame","source_ref":"frame_0300","verified":false}],
+ "frame_quality":{"status":"clear","issues":[]},"visible_text_candidates":[],
+ "consent":{"location_use":false,"media_storage":false}}

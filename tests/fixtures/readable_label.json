@@ -1,0 +1,6 @@
+{"schema_version":"1.0","event_id":"evt_0004","session_id":"fixture_label","timestamp":"2026-11-14T22:03:00Z",
+ "user_request":"Here is the bottom label",
+ "observations":[{"observation_id":"obs_0020","kind":"object_class","value":"laptop","confidence":0.93,"provenance":"camera_frame","source_ref":"frame_0200","verified":false}],
+ "frame_quality":{"status":"clear","issues":[]},
+ "visible_text_candidates":[{"candidate_id":"txt_0001","text":"EXAMPLE-MODEL-123","confidence":0.88,"source_ref":"frame_0200_crop_1","bbox":null,"ambiguity_notes":null}],
+ "consent":{"location_use":false,"media_storage":false}}

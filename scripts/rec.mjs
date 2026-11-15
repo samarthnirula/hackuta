@@ -1,0 +1,26 @@
+// Simulated caller that records the agent's audio to agent.wav
+import { writeFileSync } from 'node:fs';
+import { AccessToken, AgentDispatchClient, RoomServiceClient } from 'livekit-server-sdk';
+import { AudioStream, Room, RoomEvent, AudioSource, LocalAudioTrack, TrackPublishOptions, TrackSource, AudioFrame } from '@livekit/rtc-node';
+const { LIVEKIT_URL: url, LIVEKIT_API_KEY: key, LIVEKIT_API_SECRET: secret } = process.env;
+const http = url.replace('wss://', 'https://');
+const room = `fixlens-rec-${Date.now()}`;
+const rs = new RoomServiceClient(http, key, secret);
+await rs.createRoom({ name: room, emptyTimeout: 60 });
+await new AgentDispatchClient(http, key, secret).createDispatch(room, 'fixlens-agent');
+const at = new AccessToken(key, secret, { identity: 'rec-caller' });
+at.addGrant({ room, roomJoin: true, canPublish: true, canSubscribe: true });
+const r = new Room(); const chunks = []; let rate = 48000, ch = 1;
+r.on(RoomEvent.TrackSubscribed, track => { if (track.kind !== 1) return; (async () => { for await (const f of new AudioStream(track, 24000, 1)) { rate = f.sampleRate; ch = f.channels; chunks.push(Buffer.from(f.data.buffer.slice(f.data.byteOffset, f.data.byteOffset + f.data.byteLength))); } })(); });
+await r.connect(url, await at.toJwt(), { autoSubscribe: true });
+const src = new AudioSource(48000, 1); const tr = LocalAudioTrack.createAudioTrack('mic', src);
+const o = new TrackPublishOptions(); o.source = TrackSource.SOURCE_MICROPHONE; await r.localParticipant.publishTrack(tr, o);
+const sil = setInterval(() => src.captureFrame(new AudioFrame(new Int16Array(480), 48000, 1, 480)).catch(() => {}), 10);
+await new Promise(s => setTimeout(s, 3000));
+await rs.updateRoomMetadata(room, JSON.stringify({ chert_call: 'rec', chert_bridge_ready: true, at: new Date().toISOString() }));
+await new Promise(s => setTimeout(s, 12000));
+clearInterval(sil); await r.disconnect(); await rs.deleteRoom(room).catch(() => {});
+const pcm = Buffer.concat(chunks); const h = Buffer.alloc(44);
+h.write('RIFF', 0); h.writeUInt32LE(36 + pcm.length, 4); h.write('WAVEfmt ', 8); h.writeUInt32LE(16, 16); h.writeUInt16LE(1, 20); h.writeUInt16LE(ch, 22);
+h.writeUInt32LE(rate, 24); h.writeUInt32LE(rate * ch * 2, 28); h.writeUInt16LE(ch * 2, 32); h.writeUInt16LE(16, 34); h.write('data', 36); h.writeUInt32LE(pcm.length, 40);
+writeFileSync('agent.wav', Buffer.concat([h, pcm])); console.log('saved', (pcm.length / (rate * ch * 2)).toFixed(1), 's at', rate, 'Hz'); process.exit(0);
